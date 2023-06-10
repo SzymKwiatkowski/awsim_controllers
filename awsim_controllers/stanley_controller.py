@@ -140,20 +140,6 @@ class CubicSpline2D:
         yaw = math.atan2(dy, dx)
         return yaw
 
-def calc_spline_course(x, y, ds=0.1):
-    sp = CubicSpline2D(x, y)
-    s = list(np.arange(0, sp.s[-1], ds))
-
-    rx, ry, ryaw, rk = [], [], [], []
-    for i_s in s:
-        ix, iy = sp.calc_position(i_s)
-        rx.append(ix)
-        ry.append(iy)
-        ryaw.append(sp.calc_yaw(i_s))
-        rk.append(sp.calc_curvature(i_s))
-
-    return rx, ry, ryaw, rk, s
-
 class State:
     def __init__(self, x=0.0, y=0.0, yaw=0.0, v=0.0, a=0.0):
         self.x = x
@@ -228,7 +214,8 @@ class StanleyController(Node):
         self.state = State(x=initial_state[0], y=initial_state[1], yaw=yaw_from_quaternion(initial_state[3:]), v=0.0)
         x_r = df_waypoints['pose.x'].to_numpy()
         y_r = df_waypoints['pose.y'].to_numpy()
-        cx, cy, cyaw, ck, s = calc_spline_course(
+        self.get_logger().info(f"Initializing Spline!")
+        cx, cy, cyaw, ck, s = self.calc_spline_course(
             x_r, y_r, ds=0.1)
         self.cyaw = cyaw     
         self.target_speed = 3.5 # [units/s]
@@ -240,6 +227,23 @@ class StanleyController(Node):
 
         self.pose_subscription_ = self.create_subscription(PoseStamped, '/ground_truth/pose', 
                                                            self.stanley_controll, 10)
+        
+        self.get_logger().info(f"Stanley Initialized!")
+    
+    def calc_spline_course(self, x, y, ds=0.1):
+        sp = CubicSpline2D(x, y)
+        s = list(np.arange(0, sp.s[-1], ds))
+
+        rx, ry, ryaw, rk = [], [], [], []
+        for i_s in s:
+            ix, iy = sp.calc_position(i_s)
+            rx.append(ix)
+            ry.append(iy)
+            ryaw.append(sp.calc_yaw(i_s))
+            rk.append(sp.calc_curvature(i_s))
+            self.get_logger().info(f"Current idx: {i_s}")
+
+        return rx, ry, ryaw, rk, s
         
     def stanley_controll(self, pose: PoseStamped):
         pose_l = [pose.pose.position.x, 
@@ -254,6 +258,7 @@ class StanleyController(Node):
         dst = self.target_path.states[self.target_idx].calc_distance(pose_l[0], pose_l[1])
         Lf = Lfc + k * self.state.v
         while dst < Lf:
+            self.last_target_idx = self.target_idx
             self.target_idx = self.target_path.next_idx(self.target_idx)
             dst = self.target_path.states[self.target_idx].calc_distance(pose_l[0], pose_l[1])
             self.get_logger().info(f"err: {dst}")
@@ -290,17 +295,17 @@ class StanleyController(Node):
                           -np.sin(self.state.yaw + np.pi / 2)]
         error_front_axle = np.dot([target_state.x, target_state.y], front_axle_vec)
 
-        if self.last_target_idx >= current_target_idx:
-            current_target_idx = self.last_target_idx
+        if self.last_target_idx >= self.target_idx:
+            self.target_idx = self.last_target_idx
 
         # theta_e corrects the heading error
-        theta_e = self.normalize_angle(self.cyaw[self.tar] - self.state.yaw)
+        theta_e = self.normalize_angle(self.cyaw[self.target_idx] - self.state.yaw)
         # theta_d corrects the cross track error
         theta_d = np.arctan2(k * error_front_axle, self.state.v)
         # Steering control
         delta = theta_e + theta_d
 
-        return delta, current_target_idx
+        return delta
 
     def publish_control(self, steer, accel):
         acc_msg = AckermannControlCommand()

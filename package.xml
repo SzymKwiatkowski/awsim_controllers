@@ -13,7 +13,7 @@
   <test_depend>python3-pytest</test_depend>
   <exec_depend>ros2launch</exec_depend>
   
-  <!-- <depend>autoware_auto_msgs</depend> -->
+  <depend>autoware_auto_msgs</depend>
   <export>
     <build_type>ament_python</build_type>
   </export>
