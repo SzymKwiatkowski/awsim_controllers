@@ -3,8 +3,8 @@
 Repository contains 4 controllers:
 - [x] Pure pursuit controller
 - [x] Stanley controller
-- [] ILQR controller
-- [] ICEM controller
+- [ ] ILQR controller
+- [ ] ICEM controller
 
 ## Requirements
 First thing required is having f1tenth simulator running along with ros humble. Second requirement is to create new ros workspace and clone this repository to src directory as well as autoware_auto_msgs with commands:
