@@ -261,7 +261,7 @@ class StanleyController(Node):
         current_state = State(x=pose_l[0], y=pose_l[1], yaw=yaw_from_quaternion(pose_l[3:]), v=self.state.v)
         self.state = current_state
         ai = self.proportional_control()
-        di = self.stanley_steer_control(current_state, dst)
+        di = self.stanley_steer_control()
         ai = np.clip(ai, 0.005, 2.0)
         self.state.a = ai
         
