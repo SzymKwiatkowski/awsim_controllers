@@ -239,9 +239,9 @@ class StanleyController(Node):
         self.search_target_samples = 10
 
         self.pose_subscription_ = self.create_subscription(PoseStamped, '/ground_truth/pose', 
-                                                           self.pure_pursuite_controll, 10)
+                                                           self.stanley_controll, 10)
         
-    def pure_pursuite_controll(self, pose: PoseStamped):
+    def stanley_controll(self, pose: PoseStamped):
         pose_l = [pose.pose.position.x, 
                  pose.pose.position.y,
                  pose.pose.position.z, 
@@ -261,7 +261,7 @@ class StanleyController(Node):
         current_state = State(x=pose_l[0], y=pose_l[1], yaw=yaw_from_quaternion(pose_l[3:]), v=self.state.v)
         self.state = current_state
         ai = self.proportional_control()
-        di = self.stanley_control(current_state, dst)
+        di = self.stanley_steer_control(current_state, dst)
         ai = np.clip(ai, 0.005, 2.0)
         self.state.a = ai
         
@@ -283,7 +283,7 @@ class StanleyController(Node):
 
         return angle
 
-    def stanley_control(self):
+    def stanley_steer_control(self):
         # Project RMS error onto front axle vector
         target_state = self.target_path.states[self.target_idx]
         front_axle_vec = [-np.cos(self.state.yaw + np.pi / 2),
