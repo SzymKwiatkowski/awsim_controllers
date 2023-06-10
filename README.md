@@ -27,3 +27,19 @@ And then build entire workspace with:
 ```bash
 colcon build --symlink-install
 ```
+
+# Running controllers with simulators
+There is an option of running any controller along with simulator right of the bat. The only thing needed is to have simulator installed. When it is installed and running in background using controllers is conducted with simple ros commands.
+
+## Pure pursuit controller
+Running pure pursuit is conducted via following command:
+```bash
+ros2 launch awsim_controllers pp_controller_launch.py 
+```
+
+## Stanley controller
+Running stanley is conducted via following command:
+```bash
+ros2 launch awsim_controllers stanley_controller_launch.py
+```
+**WARNING!** Using this controller takes very long to actually initialize
