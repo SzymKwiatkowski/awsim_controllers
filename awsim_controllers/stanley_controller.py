@@ -13,8 +13,8 @@ import pandas as pd
 import bisect
 
 # Parameters
-k = 0.1  # look forward gain
-Lfc = 0.75  # [m] look-ahead distance
+k = 0.0  # look forward gain
+Lfc = 0.2  # [m] look-ahead distance
 Kp = 1.0  # speed proportional gain
 dt = 0.04  # [s] time tick
 WB = 0.28  # [m] wheel base of vehicle
@@ -218,7 +218,7 @@ class StanleyController(Node):
         cx, cy, cyaw, ck, s = self.calc_spline_course(
             x_r, y_r, ds=0.1)
         self.cyaw = cyaw     
-        self.target_speed = 3.5 # [units/s]
+        self.target_speed = 2.5 # [units/s]
         
         self.target_path = TargetPath(cx, cy)
         self.last_target_idx = 27
