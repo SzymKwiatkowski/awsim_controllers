@@ -12,7 +12,7 @@ import numpy as np
 import pandas as pd
 
 # Parameters
-k = 0.1  # look forward gain
+k = 0.07  # look forward gain
 Lfc = 0.75  # [m] look-ahead distance
 Kp = 1.0  # speed proportional gain
 dt = 0.04  # [s] time tick
