@@ -45,7 +45,7 @@ ros2 launch awsim_controllers stanley_controller_launch.py
 **WARNING!** Using this controller takes very long to actually initialize
 
 ## ILQR controller
-Running iLQR is conducted via following command:
+Running [iLQR](https://github.com/macnack/iLQR) is conducted via following command:
 ```bash
 ros2 launch awsim_controllers ilqr_controller_launch.py
 ```
