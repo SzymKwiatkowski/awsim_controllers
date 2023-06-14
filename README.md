@@ -1,17 +1,20 @@
 # AWSIM controllers
 
-Repository contains 4 controllers:
+Repository contains 3 controllers:
 - [x] Pure pursuit controller
 - [x] Stanley controller
 - [x] ILQR controller
-- [ ] ICEM controller
 
 ## Requirements
 First thing required is having f1tenth simulator running along with ros humble. Second requirement is to create new ros workspace and clone this repository to src directory as well as autoware_auto_msgs with commands:
 ```bash
-git clone https://github.com/SzymKwiatkowski/awsim_controllers
+git clone --recurse-submodules https://github.com/SzymKwiatkowski/awsim_controllers.git
 ```
-and
+if submodules are not pulled along with project use:
+```bash
+git submodule update
+``` 
+afterwards
 ```bash
 git clone https://github.com/tier4/autoware_auto_msgs
 ```
