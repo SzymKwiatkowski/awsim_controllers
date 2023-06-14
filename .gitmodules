@@ -1,0 +1,3 @@
+[submodule "iLQR"]
+	path = awsim_controllers/iLQR
+	url = https://github.com/macnack/iLQR
